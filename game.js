@@ -3,7 +3,7 @@ const CONFIG = {
   Rockets: ['Bottle', 'Canister', 'Gas tank', 'Firework', 'Gasoline', 'Diesel', 'Propane', 'Uranium', 'Alien', 'Hyperdrive', 'Antimatter'],
   Ships: ['Cardboard box ship', 'Trash can ship', 'Sofa ship', 'Ikea shelf ship', 'Lada ship', 'Ford Escort ship', 'Audi ship', 'Delorean', 'Vostok 1', 'Apollo 11', 'Vic Viper', 'USS Discovery One', 'Battlestar Galactica BG-75', 'Prometheus', 'Serenity', 'Star Destroyer', 'USS Enterprise', 'Millenium Falcon'],
   Wings: ['Paper', 'Cloth', 'Aluminium foil', 'Plastic', 'Wooden', 'Tin', 'Copper', 'Nickel', 'Bronze', 'Iron', 'Steel', 'Aluminium', 'Solar', 'Titanium', 'Carbon fabric', 'Adamantium', 'Black Matter'],
-  MoneyFormat: ['K', 'M', 'B', 'T', 'Qa', 'Qi', 'Sx', 'Sp', 'Oc', 'No', 'Dc', 'UDc', 'DDc', 'TDc', 'QaDc', 'QiDc', 'SxDc', 'SpDc', 'ODc', 'NDc', 'Vg', 'UVg', 'DVg', 'TVg', 'QaVg', 'QiVg', 'SxVg', 'SpVg', 'OVg', 'NVg', 'Tg', 'UTg', 'DTg', 'TTg', 'QaTg', 'QiTg', 'SxTg', 'SpTg', 'OTg','NTg', 'Qa', 'UQa', 'DQa', 'TQa', 'QaQa', 'QiQa', 'SxQa', 'SpQa', 'OQa', 'NQa', 'Qi', 'UQi', 'DQi', 'TQi', 'QaQi', 'QiQi', 'SxQi', 'SpQi', 'OQi', 'NQi', 'Se', 'USe', 'DSe', 'TSe', 'QaSe', 'QiSe', 'SxSe', 'SpSe', 'OSe', 'NSe', 'St', 'USt', 'DSt', 'TSt', 'QaSt', 'QiSt', 'SxSt', 'SpSt', 'OSt', 'NSt', 'Og', 'UOg', 'DOg', 'TOg', 'QaOg', 'QiOg', 'SxOg', 'SpOg', 'OOg', 'NOg', 'Nn', 'UNn', 'DNn', 'TNn', 'QaNn', 'QiNn', 'SxNn', 'SpNn', 'ONn', 'NNn'].reverse(),
+  MoneyFormat: ['K', 'M', 'B', 'T', 'Qa', 'Qi', 'Sx', 'Sp', 'Oc', 'No', 'Dc', 'UDc', 'DDc', 'TDc', 'QaDc', 'QiDc', 'SxDc', 'SpDc', 'ODc', 'NDc', 'Vg', 'UVg', 'DVg', 'TVg', 'QaVg', 'QiVg', 'SxVg', 'SpVg', 'OVg', 'NVg', 'Tg', 'UTg', 'DTg', 'TTg', 'QaTg', 'QiTg', 'SxTg', 'SpTg', 'OTg','NTg', 'Qa', 'UQa', 'DQa', 'TQa', 'QaQa', 'QiQa', 'SxQa', 'SpQa', 'OQa', 'NQa', 'Qi', 'UQi', 'DQi', 'TQi', 'QaQi', 'QiQi', 'SxQi', 'SpQi', 'OQi', 'NQi', 'Se', 'USe', 'DSe', 'TSe', 'QaSe', 'QiSe', 'SxSe', 'SpSe', 'OSe', 'NSe', 'St', 'USt', 'DSt', 'TSt', 'QaSt', 'QiSt', 'SxSt', 'SpSt', 'OSt', 'NSt', 'Og', 'UOg', 'DOg', 'TOg', 'QaOg', 'QiOg', 'SxOg', 'SpOg', 'OOg', 'NOg', 'Nn', 'UNn', 'DNn', 'TNn', 'QaNn', 'QiNn', 'SxNn', 'SpNn', 'ONn', 'NNn'],
   Parts: {
     rocket: { nameArray: 'Rockets', costMult: 2418.1, updateCostMult: 4.75, type: 'rockets', updateType: 'rocketUpdates', costType: 'rocketCost', updateCostType: 'rocketUpdateCost', speedMultState: 'rocketSpeedMult', updateSpeedMultState: 'rocketUpdateSpeedMult' },
     ship: { nameArray: 'Ships', costMult: 97.66, baseSpeedAdd: 0.1, updateCostMult: 2.5, updateSpeedAddType: true, type: 'ships', updateType: 'shipUpdates', costType: 'shipCost', updateCostType: 'shipUpdateCost' },
@@ -104,7 +104,7 @@ const Formatter = {
     if (money < 1000) return null;
     const idx = Math.min(Math.floor(Math.log10(money) / 3), CONFIG.MoneyFormat.length) - 1;
     const val = money / Math.pow(10, (idx + 1) * 3);
-    const suffix = CONFIG.MoneyFormat[CONFIG.MoneyFormat.length - 1 - idx];
+    const suffix = CONFIG.MoneyFormat[idx];
     return { val, idx, suffix };
   },
   shorten: money => {
@@ -120,7 +120,7 @@ const Formatter = {
     if (rounded >= 1000 && scale.idx < CONFIG.MoneyFormat.length - 1) {
       rounded = 1; scale.idx++;
     }
-    return scientific ? rounded + 'e+' + ((scale.idx + 1) * 3) : rounded + ' ' + CONFIG.MoneyFormat[CONFIG.MoneyFormat.length - 1 - scale.idx];
+    return scientific ? rounded + 'e+' + ((scale.idx + 1) * 3) : rounded + ' ' + CONFIG.MoneyFormat[scale.idx];
   },
   shortenFunds: money => {
     const scale = Formatter._getScaleConfig(money);
@@ -264,7 +264,7 @@ const UI = {
       DOM.setStyle('shipDisplay', 'top', shipPos + '%');
     } 
     else if (this.activeTab === 'refugees') {
-      DOM.setDisplay('btn-tab-refugees', player.planetsPassed > 0 || player.refugees > 0);
+      DOM.setDisplay('btn-tab-refugees', player.planetsPassed > 0 || player.refugees > 0, 'block');
       DOM.set('val-prestige-refugees', Formatter.shortenCosts(player.refugees));
       DOM.setDisplay('msg-prestige-req', player.planetsPassed === 0 && player.refugees === 0, 'block');
       
@@ -445,7 +445,7 @@ const SaveManager = {
     player.lastSaveTime = Date.now();
     localStorage.setItem('save', JSON.stringify(player));
   },
-simulateOffline: function(timeRemaining) {
+  simulateOffline: function(timeRemaining) {
     const totalOfflineTime = timeRemaining;
     
     let earnedD = 0, earnedM = 0, planets = 0;
@@ -508,6 +508,34 @@ function init() {
       case 'closeModal':
         const modal = document.getElementById('popup');
         if (modal) modal.style.display = 'none';
+        break;
+      case 'exportSave':
+        SaveManager.save();
+        const exportStr = btoa(JSON.stringify(player));
+        if (navigator.clipboard && window.isSecureContext) {
+          navigator.clipboard.writeText(exportStr).then(() => {
+            alert('Save copied to clipboard!');
+          }).catch(() => {
+            prompt("Copy your save data:", exportStr);
+          });
+        } else {
+          prompt("Copy your save data:", exportStr);
+        }
+        break;
+      case 'importSave':
+        const imported = prompt("Paste your save data here:");
+        if (imported) {
+          try {
+            const parsed = JSON.parse(atob(imported));
+            player = { ...DEFAULT_STATE, ...parsed };
+            updateCache();
+            SaveManager.save();
+            alert('Save imported successfully!');
+            UI.update();
+          } catch (e) {
+            alert('Error: Invalid save data!');
+          }
+        }
         break;
     }
   });
