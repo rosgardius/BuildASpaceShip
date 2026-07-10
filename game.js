@@ -35,8 +35,8 @@ const CONFIG = {
 // DEFAULT STATE ---
 const DEFAULT_STATE = {
   distance: 0, bestDistance: 0, baseSpeed: 0,
-  rocketSpeedMult: 2, rocketUpdateSpeedMult: 1.5,
-  wingSpeedMult: 1.5, wingUpdateSpeedMult: 1.2,
+  rocketSpeedMult: 1.75, rocketUpdateSpeedMult: 1.35,
+  wingSpeedMult: 1.45, wingUpdateSpeedMult: 1.15,
   money: 50, totalMoney: 0, totalDistance: 0,
   rocketCost: 10, shipCost: 10, wingCost: 25,
   rocketUpdateCost: 20, shipUpdateCost: 20, wingUpdateCost: 40,
@@ -430,6 +430,12 @@ const SaveManager = {
       const data = localStorage.getItem('save');
       if (data) {
         const parsed = JSON.parse(data);
+      if(parsed['rocketSpeedMult'] === 2) {
+        parsed['rocketSpeedMult'] = 1.75;
+        parsed['rocketUpdateSpeedMult'] = 1.35;
+        parsed['wingSpeedMult'] = 1.45;
+        parsed['wingUpdateSpeedMult'] = 1.15;
+      }
         player = { ...DEFAULT_STATE, ...parsed };
         updateCache();
         
