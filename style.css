@@ -1,511 +1,358 @@
-
-
-
+/* ==========================================================================
+   1. RESETS & GLOBALS
+   ========================================================================== */
 * {
     margin: 0; 
     padding: 0;
+    box-sizing: border-box;
 }
 
-@keyframes move-twink-back {
-    from {background-position:0 0;}
-    to {background-position:-10000px 5000px;}
-}
-@-webkit-keyframes move-twink-back {
-    from {background-position:0 0;}
-    to {background-position:-10000px 5000px;}
-}
-@-moz-keyframes move-twink-back {
-    from {background-position:0 0;}
-    to {background-position:-10000px 5000px;}
-}
-@-ms-keyframes move-twink-back {
-    from {background-position:0 0;}
-    to {background-position:-10000px 5000px;}
+body {
+    font-family: "Lucida Sans Unicode", "Lucida Grande", sans-serif;
+    color: #333;
+    overflow-x: hidden;
 }
 
-@keyframes move-clouds-back {
-    from {background-position:0 0;}
-    to {background-position:10000px 0;}
-}
-@-webkit-keyframes move-clouds-back {
-    from {background-position:0 0;}
-    to {background-position:10000px 0;}
-}
-@-moz-keyframes move-clouds-back {
-    from {background-position:0 0;}
-    to {background-position:10000px 0;}
-}
-@-ms-keyframes move-clouds-back {
-    from {background-position: 0;}
-    to {background-position:10000px 0;}
-}
-
-.stars, .twinkling, .clouds {
-  position:absolute;
-  top:0;
-  left:0;
-  right:0;
-  bottom:0;
-  width:100%;
-  height:100%;
-  display:block;
-}
-
-.stars {
-  background:#01132a url(http://img4.hostingpics.net/pics/144421stars.png) repeat top center;
-  z-index:-2;
-}
-
-.twinkling{
-  background:transparent url(http://img4.hostingpics.net/pics/352884twinkling.png) repeat top center;
-  z-index:-1;
-
-  -moz-animation:move-twink-back 150s linear infinite;
-  -ms-animation:move-twink-back 150s linear infinite;
-  -o-animation:move-twink-back 150s linear infinite;
-  -webkit-animation:move-twink-back 150s linear infinite;
-  animation:move-twink-back 150s linear infinite;
-
-}
-
-div {
-    font-family: Lucida Sans Unicode;
-  
-}
-  
-.tab {
-  position: relative;
-  background: #68A0B3;
-  border-radius: 12px;
-  display: none;
-  width: 600px;
-  text-align:center;
-  margin: auto;
-  z-index: 1;
-  border: 3px solid black;
-}
-
-
-#wrapper {
-
-  margin: 0px auto;
-  text-align: center;
-  
-}
-
-
-.button {
-  background: #E0E0E0;
-  font-weight: bold;
-  border: 2px solid #5C005C;
-  width: 250px;
-  height: 50px;
-  cursor: pointer;
-  border-radius: 6px;
-  transition-duration: 0.35s;
-  margin: 4px;
-}
-
-button:focus, input[type="button"]:focus {
-    outline: none;
-}
-
-.tooltip {
-  visibility: hidden;
-    width: 120px;
-    background-color: black;
-    color: #fff;
-    text-align: center;
-    border-radius: 6px;
-    padding: 5px 0;
-    position: absolute;
-    z-index: 1;
-    top: -5px;
-    left: 110%;
-}
-
-.button:hover {
-  background: #41E881;
-  border-radius: 0px
+/* Inherit fonts for buttons and inputs */
+button, input {
+    font-family: inherit;
 }
 
 a {
-  color:#39c;
-  text-decoration:none;
-  text-align: center;
+    color: #3399cc;
+    text-decoration: none;
+    text-align: center;
+    transition: color 0.2s;
 }
 
 a:hover {
-  color:#069;
+    color: #006699;
 }
 
-
-
-.container {
-  position:absolute;
-  top:20%;
-  background-color: #1A627A;
-  width: 120px;
-  height: 600px;
-  display: inline-block;
-  margin: 0px auto;
-  border-radius: 6px
-}
-
-
-
-#planet {
-  position:absolute;
-  left:0%;
-  top:0%;
-  z-index:0;
-  
-}
-#arrival {
-  z-index: 1;
-  position: Absolute;
-  font-weight: bold;
-  top:0%;
-  left:0%;
-  color: #b75254;
-  text-shadow: -1px 0 black, 0 1px black, 1px 0 black, 0 -1px black;
-  font-size: 19px;
-}
-
-
-
-.ship {
-  width:82px;
-  left:17%;
-  top:20px;
-  position:absolute;
-}
-
-.nbutton {
-  color: #D6D0D0;
-  background: #2B2B2B;
-  font-weight: bold;
-  border: 2px solid #5C005C;
-  width: 250px;
-  height: 50px;
-  cursor: pointer;
-  border-radius: 6px;
-  transition-duration: 0.35s;
-  
-  margin: 4px;
-}
-
-.nbutton:hover {
-  background: #D11313;
-  border-radius: 0px
-}
-
-
-.tabbutton {
-  background: #86D9C4;
-  border: 2px solid #23633E;
-  width: 146px;
-  height: 70px;
-  cursor: pointer;
-  border-radius: 6px;
-  transition-duration: 0.35s;
-  font-size: 22px;
-  
-}
-
-.tabbutton:hover {
-  background: #5D9998;
-  border: 2px solid #23633E;
-  width: 146px;
-  height: 70px;
-  cursor: pointer;
-  border-radius: 6px;
-  transition-duration: 0.35s;
-  font-size: 22px;
-  
-}
-
-
-
-.tabswitcher {
-  display: block;
-  margin: auto;
-  width: 610px;
-  text-align:center;
-  z-index: 1;
-}
-
-.achievement {
-  background: #68A0B3;
-  display: none;
-  height: 70px;
-  line-height: 70px;
-  text-align: center;
-  border-radius: 12px;
-  border: 2px solid black;
-  margin: 4px;
-}
-
-
-
-
-  #achievementBox {
-    background-color: #84C5DB;
-    color: black;
-    text-align: center;
-    margin: 0 auto;
-    width: 650px;
-    height: 70px;
-    line-height: 70px;
-    border-radius: 12px;
-    border: 2px solid black;
-    display: none;
-  }
-  
-
-#prestigeUpgrades {
-
-  position: relative;
-  background: #68A0B3;
-  border-radius: 12px;
-  display: block;
-  width: 550px;
-  text-align:center;
-  margin: auto;
-  z-index: 1;
-  border: 3px solid black;
-}
-
-
-[data-tooltip] {
-  position: relative;
-  z-index: 2;
-  cursor: pointer;
-}
-
-[data-tooltip]:before {
-  visibility: hidden;
-  -ms-filter: "progid:DXImageTransform.Microsoft.Alpha(Opacity=0)";
-  filter: progid: DXImageTransform.Microsoft.Alpha(Opacity=0);
-  opacity: 0;
-  pointer-events: none;
-}
-
-[data-tooltip]:before {
-  position: absolute;
-  bottom: -20%;
-  left: 150%;
-  margin-bottom: 5px;
-  margin-left: -80px;
-  padding: 7px;
-  width: 160px;
-  -webkit-border-radius: 3px;
-  -moz-border-radius: 3px;
-  border-radius: 3px;
-  background-color: #000;
-  background-color: hsla(0, 0%, 5%, 0.9);
-  color: #fff;
-  content: attr(data-tooltip);
-  text-align: center;
-  font-size: 14px;
-  line-height: 1.2;
-  transition-duration: .5s;
-}
-
-
-
-
-[data-tooltip]:hover:before {
-  visibility: visible;
-  -ms-filter: "progid:DXImageTransform.Microsoft.Alpha(Opacity=100)";
-  filter: progid: DXImageTransform.Microsoft.Alpha(Opacity=100);
-  opacity: 1;
-}
-
-
-[ach-tooltip] {
-  position: relative;
-  z-index: 2;
-
-}
-
-[ach-tooltip]:before,
-[ach-tooltip]:after {
-  visibility: hidden;
-  -ms-filter: "progid:DXImageTransform.Microsoft.Alpha(Opacity=0)";
-  filter: progid: DXImageTransform.Microsoft.Alpha(Opacity=0);
-  opacity: 0;
-  pointer-events: none;
-}
-
-[ach-tooltip]:before {
-  position: absolute;
-  bottom: 100%;
-  left: 50%;
-  margin-bottom: 5px;
-  margin-left: -80px;
-  padding: 7px;
-  width: 160px;
-  -webkit-border-radius: 3px;
-  -moz-border-radius: 3px;
-  border-radius: 3px;
-  background-color: #000;
-  background-color: hsla(0, 0%, 5%, 0.9);
-  color: #fff;
-  content: attr(ach-tooltip);
-  text-align: center;
-  font-size: 14px;
-  line-height: 1.2;
-  transition-duration: .5s;
-}
-
-[ach-tooltip]:after {
-  position: absolute;
-  bottom: 100%;
-  left: 50%;
-  margin-left: -5px;
-  width: 0;
-  border-top: 5px solid #000;
-  border-top: 5px solid hsla(0, 0%, 5%, 0.9);
-  border-right: 5px solid transparent;
-  border-left: 5px solid transparent;
-  content: " ";
-  font-size: 0;
-  line-height: 0;
-  transition-duration: .5s;
-}
-
-
-
-
-[ach-tooltip]:hover:before,
-[ach-tooltip]:hover:after{
-  visibility: visible;
-  -ms-filter: "progid:DXImageTransform.Microsoft.Alpha(Opacity=100)";
-  filter: progid: DXImageTransform.Microsoft.Alpha(Opacity=100);
-  opacity: 1;
-}
-
-
-
-
-[prstg-tooltip] {
-  position: relative;
-  z-index: 2;
-  cursor: pointer;
-}
-
-[prstg-tooltip]:before {
-  visibility: hidden;
-  -ms-filter: "progid:DXImageTransform.Microsoft.Alpha(Opacity=0)";
-  filter: progid: DXImageTransform.Microsoft.Alpha(Opacity=0);
-  opacity: 0;
-  pointer-events: none;
-}
-
-[prstg-tooltip]:before {
-  position: absolute;
-  bottom: -10%;
-  left: -45%;
-  margin-bottom: 5px;
-  margin-left: -80px;
-  padding: 7px;
-  width: 160px;
-  -webkit-border-radius: 3px;
-  -moz-border-radius: 3px;
-  border-radius: 3px;
-  background-color: #000;
-  background-color: hsla(0, 0%, 5%, 0.9);
-  color: #fff;
-  content: attr(prstg-tooltip);
-  text-align: center;
-  font-size: 14px;
-  line-height: 1.2;
-  transition-duration: .5s;
-}
-
-
-
-
-[prstg-tooltip]:hover:before {
-  visibility: visible;
-  -ms-filter: "progid:DXImageTransform.Microsoft.Alpha(Opacity=100)";
-  filter: progid: DXImageTransform.Microsoft.Alpha(Opacity=100);
-  opacity: 1;
-}
-
-
-
-
-.modal {
-    display: none; /* Hidden by default */
-    position: fixed; /* Stay in place */
-    z-index: 1; /* Sit on top */
-    padding-top: 100px; /* Location of the box */
-    left: 0;
-    top: 0;
-    width: 100%; /* Full width */
-    height: 100%; /* Full height */
-    overflow: auto; /* Enable scroll if needed */
-    background-color: rgb(0,0,0); /* Fallback color */
-    background-color: rgba(0,0,0,0.4); /* Black w/ opacity */
-    z-index: 2;
-}
-
-/* Modal Content */
-.modal-content {
-    position: relative;
-    background-color: #6FB3C9;
-    margin: auto;
-    padding: 0;
-    top: 150px;
-    border: 1px solid #888;
-    width: 800px;
-    box-shadow: 0 4px 8px 0 rgba(0,0,0,0.2),0 6px 20px 0 rgba(0,0,0,0.19);
-    -webkit-animation-name: animatetop;
-    -webkit-animation-duration: 0.4s;
-    animation-name: animatetop;
-    animation-duration: 0.4s;
-    z-index: 2;
-}
-
-/* Add Animation */
-@-webkit-keyframes animatetop {
-    from {top:-300px; opacity:0}
-    to {top:150; opacity:1}
+/* ==========================================================================
+   2. BACKGROUND & ANIMATIONS
+   ========================================================================== */
+@keyframes move-twink-back {
+    from { background-position: 0 0; }
+    to { background-position: -10000px 5000px; }
 }
 
 @keyframes animatetop {
-    from {top:-300px; opacity:0}
-    to {top:150; opacity:1}
+    from { top: -300px; opacity: 0; }
+    to { top: 150px; opacity: 1; }
 }
 
-/* The Close Button */
+.stars, .twinkling {
+    position: fixed;
+    top: 0; left: 0; right: 0; bottom: 0;
+    width: 100%;
+    height: 100%;
+    display: block;
+}
+
+.stars {
+    background: #01132a url(http://img4.hostingpics.net/pics/144421stars.png) repeat top center;
+    z-index: -2;
+}
+
+.twinkling {
+    background: transparent url(http://img4.hostingpics.net/pics/352884twinkling.png) repeat top center;
+    z-index: -1;
+    animation: move-twink-back 150s linear infinite;
+}
+
+/* ==========================================================================
+   3. TYPOGRAPHY
+   ========================================================================== */
+h2 {
+    margin: 15px 0 20px 0;
+    color: #0E3545;
+    font-size: 28px;
+    text-transform: uppercase;
+    letter-spacing: 1px;
+    text-shadow: 1px 1px 2px rgba(255, 255, 255, 0.4);
+}
+
+h3 {
+    margin: 15px 0 10px 0;
+    color: #124357;
+    font-size: 20px;
+}
+
+.description-text {
+    font-size: 14px;
+    color: #222;
+    margin: 4px 0 10px 0;
+    display: block;
+}
+
+.wait-time {
+    font-size: 15px;
+    font-weight: bold;
+    color: #8C0E0E;
+    margin-left: 10px;
+    text-shadow: 1px 1px 0 rgba(255, 255, 255, 0.4);
+}
+
+/* ==========================================================================
+   4. LAYOUT & TABS
+   ========================================================================== */
+#wrapper {
+    margin: 0 auto;
+    text-align: center;
+}
+
+.tabswitcher {
+    display: block;
+    margin: 0 auto 20px auto;
+    width: 760px;
+    text-align: center;
+    z-index: 1;
+}
+
+.tab {
+    position: relative;
+    background: #68A0B3;
+    border-radius: 12px;
+    display: none; /* Controlled via JS */
+    width: 600px;
+    padding-bottom: 20px; 
+    text-align: center;
+    margin: 0 auto;
+    z-index: 1;
+    border: 3px solid black;
+}
+
+.upgrade-group {
+    margin-bottom: 20px;
+}
+
+/* Adjustments for specific tab contents */
+#statistics div {
+    margin-top: 5px;
+    font-size: 16px;
+}
+
+.update-amount {
+    display: inline-block;
+    width: 40px;
+    font-weight: bold;
+    font-size: 18px;
+}
+
+/* ==========================================================================
+   5. BUTTONS
+   ========================================================================== */
+.button, .nbutton {
+    font-weight: bold;
+    border: 2px solid #5C005C;
+    width: 250px;
+    height: 50px;
+    cursor: pointer;
+    border-radius: 6px;
+    transition: background-color 0.35s, border-radius 0.35s, color 0.35s;
+    margin: 4px;
+}
+
+.button {
+    background: #E0E0E0;
+    color: #000;
+}
+
+.button:hover {
+    background: #41E881;
+    border-radius: 0;
+}
+
+.nbutton {
+    background: #2B2B2B;
+    color: #D6D0D0;
+}
+
+.nbutton:hover {
+    background: #D11313;
+    border-radius: 0;
+}
+
+button:focus {
+    outline: 2px solid #FFF;
+    outline-offset: 2px;
+}
+
+.tabbutton {
+    background: #86D9C4;
+    border: 2px solid #23633E;
+    width: 146px;
+    height: 70px;
+    cursor: pointer;
+    border-radius: 6px;
+    transition: background-color 0.35s, border-radius 0.35s;
+    font-size: 22px;
+    color: #000;
+}
+
+.tabbutton:hover {
+    background: #5D9998;
+}
+
+/* ==========================================================================
+   6. COMPONENTS (SHIP CONTAINER, MODAL, ACHIEVEMENTS)
+   ========================================================================== */
+
+/* --- Container for Ship & Planet --- */
+.container {
+    position: absolute;
+    top: 20%;
+    left: 50%;
+    margin-left: 320px; 
+    background-color: #1A627A;
+    width: 250px; 
+    height: 600px;
+    display: none; /* Controlled via JS */
+    border-radius: 6px;
+    overflow: hidden;
+}
+
+#planetInfo {
+    z-index: 1;
+    position: absolute;
+    font-weight: bold;
+    top: 60px;
+    left: 0;
+    width: 100%;
+    color: #ffd2d2;
+    text-shadow: -1px -1px 0 #000, 1px -1px 0 #000, -1px 1px 0 #000, 1px 1px 0 #000;
+    font-size: 15px;
+    line-height: 1.4;
+    text-align: center;
+}
+
+#planet {
+    position: absolute;
+    left: 50%;
+    transform: translateX(-50%);
+    top: 130px; 
+    z-index: 0;
+    width: 120px;
+}
+
+.ship {
+    width: 82px;
+    left: 50%;
+    transform: translateX(-50%);
+    top: 20px;
+    position: absolute;
+    z-index: 2;
+}
+
+/* --- Achievements List --- */
+.achievement {
+    background: #84C5DB;
+    display: block;
+    min-height: 80px;
+    line-height: 1.6;
+    text-align: center;
+    border-radius: 8px;
+    border: 2px solid #1C7694;
+    margin: 12px auto;
+    padding: 15px;
+    width: 85%;
+    box-shadow: inset 0 0 10px rgba(255,255,255,0.2), 0 4px 6px rgba(0,0,0,0.2);
+}
+
+.achievement strong {
+    font-size: 18px;
+    color: #0E3545;
+    display: block;
+    margin-bottom: 6px;
+    letter-spacing: 0.5px;
+}
+
+.achievement .description-text {
+    font-size: 15px;
+    font-weight: bold;
+    color: #222;
+    margin: 2px 0;
+}
+
+/* --- Floating Achievement Notification --- */
+#achievementBox {
+    background-color: #84C5DB;
+    color: black;
+    text-align: center;
+    width: 650px;
+    height: 70px;
+    line-height: 66px;
+    border-radius: 12px;
+    border: 2px solid black;
+    font-weight: bold;
+    
+    /* Centering and fixed positioning */
+    position: fixed;
+    bottom: 30px;
+    left: 50%;
+    transform: translateX(-50%);
+    z-index: 1000;
+    
+    /* Vanilla JS Fade In/Out logic */
+    opacity: 0;
+    visibility: hidden;
+    transition: opacity 1.5s ease-in-out, visibility 1.5s;
+}
+
+#achievementBox.show {
+    opacity: 1;
+    visibility: visible;
+    transition: opacity 0.5s ease-in-out;
+}
+
+/* --- Modal Window --- */
+.modal {
+    display: none; 
+    position: fixed; 
+    left: 0;
+    top: 0;
+    width: 100%; 
+    height: 100%; 
+    overflow: auto; 
+    background-color: rgba(0, 0, 0, 0.7); 
+    z-index: 3000;
+}
+
+.modal-content {
+    position: relative;
+    background-color: #6FB3C9;
+    margin: 150px auto auto auto;
+    border: 1px solid #333;
+    width: 800px;
+    box-shadow: 0 4px 16px 0 rgba(0, 0, 0, 0.4);
+    animation: animatetop 0.4s;
+    z-index: 4000;
+}
+
+.modal-header {
+    padding: 8px 16px;
+    background-color: #1C7694;
+    color: white;
+}
+
+.modal-body {
+    padding: 25px 16px;
+    font-size: 18px;
+    line-height: 1.5;
+}
+
 .close {
     color: white;
     float: right;
     font-size: 28px;
     font-weight: bold;
+    background: transparent;
+    border: none;
+    cursor: pointer;
 }
 
 .close:hover,
 .close:focus {
     color: #000;
-    text-decoration: none;
-    cursor: pointer;
-}
-
-.modal-header {
-    padding: 2px 16px;
-    background-color: #1C7694;
-    color: white;
-}
-
-.modal-body {padding: 2px 16px;}
-
-.modal-footer {
-    padding: 2px 16px;
-    background-color: #5cb85c;
-    color: white;
-
 }
