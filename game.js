@@ -35,7 +35,7 @@ const CONFIG = {
 // DEFAULT STATE ---
 const DEFAULT_STATE = {
   distance: 0, bestDistance: 0, baseSpeed: 0,
-  rocketSpeedMult: 1.75, rocketUpdateSpeedMult: 1.35,
+  rocketSpeedMult: 1.85, rocketUpdateSpeedMult: 1.4,
   wingSpeedMult: 1.45, wingUpdateSpeedMult: 1.15,
   money: 50, totalMoney: 0, totalDistance: 0,
   rocketCost: 10, shipCost: 10, wingCost: 25,
@@ -430,9 +430,9 @@ const SaveManager = {
       const data = localStorage.getItem('save');
       if (data) {
         const parsed = JSON.parse(data);
-      if(parsed['rocketSpeedMult'] === 2) {
-        parsed['rocketSpeedMult'] = 1.75;
-        parsed['rocketUpdateSpeedMult'] = 1.35;
+      if(parsed['rocketSpeedMult'] === 2 || parsed['rocketSpeedMult'] === 1.75) {
+        parsed['rocketSpeedMult'] = 1.85;
+        parsed['rocketUpdateSpeedMult'] = 1.4;
         parsed['wingSpeedMult'] = 1.45;
         parsed['wingUpdateSpeedMult'] = 1.15;
       }
