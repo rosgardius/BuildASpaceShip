@@ -489,7 +489,7 @@ const SaveManager = {
 
                 if (player.lastSaveTime) {
                     const diffSec = (Date.now() - player.lastSaveTime) / 1000;
-                    if (diffSec > 60) this.simulateOffline(diffSec);
+                    if (diffSec > 15) this.simulateOffline(diffSec);
                 }
             }
         } catch (e) { console.error('Load failed:', e); }
@@ -646,7 +646,7 @@ function renderLoop() {
     requestAnimationFrame(renderLoop);
 }
 
-setInterval(() => SaveManager.save(), 10000);
+setInterval(() => SaveManager.save(), 3000);
 
 // BOOTSTRAP ---
 SaveManager.load();
