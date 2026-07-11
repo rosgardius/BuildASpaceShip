@@ -63,8 +63,8 @@ const Formulas = {
         }
         return 1 + sum;
     },
-    calcSlaveryMult: level => level === 0 ? 1 : (1.3 + 0.05 * Math.pow(level, 2) + 0.05 * level),
-    calcCapitalismMult: level => level === 0 ? 1 : (1.25 + 0.075 * Math.pow(level, 2) + 0.075 * level),
+    calcSlaveryMult: level => level === 0 ? 1 : (1.3 + 0.05 * Math.pow(level - 1, 2) + 0.35 * (level - 1)),
+    calcCapitalismMult: level => level === 0 ? 1 : (1 + 0.075 * Math.pow(level, 2) + 0.075 * level),
     calcIncomePerSec: (speed, distance, distLogBase, capLevel, achMult) =>
         (speed * (1 + 0.1 * Formulas.getLog(Math.max(1, distance), distLogBase)) / 4) *
         Formulas.calcCapitalismMult(capLevel) *
