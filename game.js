@@ -6,10 +6,9 @@ const CONFIG = {
     MoneyFormat: ['K', 'M', 'B', 'T', 'Qa', 'Qi', 'Sx', 'Sp', 'Oc', 'No', 'Dc', 'UDc', 'DDc', 'TDc', 'QaDc', 'QiDc', 'SxDc', 'SpDc', 'ODc', 'NDc', 'Vg', 'UVg', 'DVg', 'TVg', 'QaVg', 'QiVg', 'SxVg', 'SpVg', 'OVg', 'NVg', 'Tg', 'UTg', 'DTg', 'TTg', 'QaTg', 'QiTg', 'SxTg', 'SpTg', 'OTg', 'NTg', 'Qa', 'UQa', 'DQa', 'TQa', 'QaQa', 'QiQa', 'SxQa', 'SpQa', 'OQa', 'NQa', 'Qi', 'UQi', 'DQi', 'TQi', 'QaQi', 'QiQi', 'SxQi', 'SpQi', 'OQi', 'NQi', 'Se', 'USe', 'DSe', 'TSe', 'QaSe', 'QiSe', 'SxSe', 'SpSe', 'OSe', 'NSe', 'St', 'USt', 'DSt', 'TSt', 'QaSt', 'QiSt', 'SxSt', 'SpSt', 'OSt', 'NSt', 'Og', 'UOg', 'DOg', 'TOg', 'QaOg', 'QiOg', 'SxOg', 'SpOg', 'OOg', 'NOg', 'Nn', 'UNn', 'DNn', 'TNn', 'QaNn', 'QiNn', 'SxNn', 'SpNn', 'ONn', 'NNn'],
     Parts: {
         rocket: { nameArray: 'Rockets', costMult: 2418.1, updateCostMult: 4.75, type: 'rockets', updateType: 'rocketUpdates', costType: 'rocketCost', updateCostType: 'rocketUpdateCost', speedMultState: 'rocketSpeedMult', updateSpeedMultState: 'rocketUpdateSpeedMult' },
-        ship: { nameArray: 'Ships', costMult: 97.66, baseSpeedAdd: 0.1, updateCostMult: 2.5, updateSpeedAddType: true, type: 'ships', updateType: 'shipUpdates', costType: 'shipCost', updateCostType: 'shipUpdateCost' },
-        wing: { nameArray: 'Wings', costMult: 157.28, updateCostMult: 2.75, type: 'wings', updateType: 'wingUpdates', costType: 'wingCost', updateCostType: 'wingUpdateCost', speedMultState: 'wingSpeedMult', updateSpeedMultState: 'wingUpdateSpeedMult' }
+        ship: { nameArray: 'Ships', costMult: 118.82, baseSpeedAdd: 0.1, updateCostMult: 2.6, updateSpeedAddType: true, type: 'ships', updateType: 'shipUpdates', costType: 'shipCost', updateCostType: 'shipUpdateCost' },
+        wing: { nameArray: 'Wings', costMult: 286.3, updateCostMult: 3.1, type: 'wings', updateType: 'wingUpdates', costType: 'wingCost', updateCostType: 'wingUpdateCost', speedMultState: 'wingSpeedMult', updateSpeedMultState: 'wingUpdateSpeedMult' }
     },
-    Balance: { baseRefugeeIncomeBoost: 0.001, capitalismIncomeBoost: 0.25, slaverySpeedBoost: 0.3 },
     Achievements: [
         {
             id: 'achLevelDistance',
@@ -36,7 +35,7 @@ const CONFIG = {
 const DEFAULT_STATE = {
     distance: 0, bestDistance: 0, baseSpeed: 0,
     rocketSpeedMult: 1.85, rocketUpdateSpeedMult: 1.4,
-    wingSpeedMult: 1.45, wingUpdateSpeedMult: 1.15,
+    wingSpeedMult: 1.5, wingUpdateSpeedMult: 1.15,
     money: 50, totalMoney: 0, totalDistance: 0,
     rocketCost: 10, shipCost: 10, wingCost: 25,
     rocketUpdateCost: 20, shipUpdateCost: 20, wingUpdateCost: 40,
@@ -66,10 +65,11 @@ const Formulas = {
         }
         return 1 + sum;
     },
-    calcIncomePerSec: (speed, distance, distLogBase, capLevel, ref, achMult) =>
+    calcSlaveryMult: level => level === 0 ? 1 : (1.3 + 0.05 * Math.pow(level, 2) + 0.05 * level),
+    calcCapitalismMult: level => level === 0 ? 1 : (1.25 + 0.075 * Math.pow(level, 2) + 0.075 * level),
+    calcIncomePerSec: (speed, distance, distLogBase, capLevel, achMult) =>
         (speed * (1 + 0.1 * Formulas.getLog(Math.max(1, distance), distLogBase)) / 4) *
-        (1 + CONFIG.Balance.capitalismIncomeBoost * capLevel) *
-        (1 + CONFIG.Balance.baseRefugeeIncomeBoost * ref) *
+        Formulas.calcCapitalismMult(capLevel) *
         achMult,
     calcRocketMult: (rockets, updates, baseMult, upMult) => {
         if (rockets === 0) return 1;
@@ -82,7 +82,7 @@ const Formulas = {
         return Math.pow(baseMult, wings) * Math.pow(upMult, totalUpdates);
     },
     calcSpeed: (baseSpeed, rTotalMult, wTotalMult, slavLevel) =>
-        baseSpeed * (rTotalMult * wTotalMult) * (1 + CONFIG.Balance.slaverySpeedBoost * slavLevel),
+        baseSpeed * (rTotalMult * wTotalMult) * Formulas.calcSlaveryMult(slavLevel),
     calcCapitalismCost: level => Math.floor(10 * Math.pow(1.25, level)),
     calcSlaveryCost: level => Math.floor(5 * Math.pow(1.32, level))
 };
@@ -96,7 +96,7 @@ function updateCache() {
     const achLevels = [player.achLevelDistance, player.achLevelSpeed, player.achLevelPlanets];
     const achMult = Formulas.calcAchievementMultiplier(achLevels);
 
-    player.cachedIncomePerSec = Formulas.calcIncomePerSec(player.cachedSpeed, player.distance, player.distanceLogBase, player.capitalismLevel, player.refugees, achMult);
+    player.cachedIncomePerSec = Formulas.calcIncomePerSec(player.cachedSpeed, player.distance, player.distanceLogBase, player.capitalismLevel, achMult);
 }
 
 const Formatter = {
@@ -268,9 +268,11 @@ const UI = {
             DOM.set('val-prestige-refugees', Formatter.shortenCosts(player.refugees));
             DOM.setDisplay('msg-prestige-req', player.planetsPassed === 0 && player.refugees === 0, 'block');
 
-            DOM.set('val-boost-refugees', (player.refugees * CONFIG.Balance.baseRefugeeIncomeBoost * 100).toFixed(1));
-            DOM.set('val-boost-slavery', (player.slaveryLevel * CONFIG.Balance.slaverySpeedBoost * 100).toFixed(0));
-            DOM.set('val-boost-capitalism', (player.capitalismLevel * CONFIG.Balance.capitalismIncomeBoost * 100).toFixed(0));
+            DOM.set('val-boost-slavery', ((Formulas.calcSlaveryMult(player.slaveryLevel) - 1) * 100).toFixed(0));
+            DOM.set('val-boost-capitalism', ((Formulas.calcCapitalismMult(player.capitalismLevel) - 1) * 100).toFixed(0));
+
+            DOM.set('val-next-slavery', ((Formulas.calcSlaveryMult(player.slaveryLevel + 1) - Formulas.calcSlaveryMult(player.slaveryLevel)) * 100).toFixed(0));
+            DOM.set('val-next-capitalism', ((Formulas.calcCapitalismMult(player.capitalismLevel + 1) - Formulas.calcCapitalismMult(player.capitalismLevel)) * 100).toFixed(0));
 
             const slavCost = Formulas.calcSlaveryCost(player.slaveryLevel);
             const capCost = Formulas.calcCapitalismCost(player.capitalismLevel);
@@ -430,12 +432,6 @@ const SaveManager = {
             const data = localStorage.getItem('save');
             if (data) {
                 const parsed = JSON.parse(data);
-                if (parsed['rocketSpeedMult'] === 2 || parsed['rocketSpeedMult'] === 1.75) {
-                    parsed['rocketSpeedMult'] = 1.85;
-                    parsed['rocketUpdateSpeedMult'] = 1.4;
-                    parsed['wingSpeedMult'] = 1.45;
-                    parsed['wingUpdateSpeedMult'] = 1.15;
-                }
                 player = { ...DEFAULT_STATE, ...parsed };
                 updateCache();
 

@@ -1,243 +1,241 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-  <meta charset="utf-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>Build A Spaceship!</title>
-  <link rel="shortcut icon" type="image/png" href="https://cdn2.iconfinder.com/data/icons/science-solid-icons-vol-1/48/010-512.png"/>
-  <link rel="stylesheet" type="text/css" href="style.css">
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Build A Spaceship!</title>
+    <link rel="shortcut icon" type="image/png" href="https://cdn2.iconfinder.com/data/icons/science-solid-icons-vol-1/48/010-512.png" />
+    <link rel="stylesheet" type="text/css" href="style.css">
 </head>
 <body>
 
-  <div class="stars" aria-hidden="true"></div>
-  <div class="twinkling" aria-hidden="true"></div>
+    <div class="stars" aria-hidden="true"></div>
+    <div class="twinkling" aria-hidden="true"></div>
 
-  <div id="popup" class="modal" role="dialog" aria-labelledby="modalTitle" aria-describedby="modalDesc">
-    <div class="modal-content">
-      <div class="modal-header">
-        <button class="close" data-action="closeModal" aria-label="Close modal">×</button>
-        <h2 id="modalTitle" style="text-align:center">Welcome</h2>
-      </div>
-      <div id="modalDesc" style="text-align:center" class="modal-body">
-        <p>You heard from the news that perfect exoplanets are waiting to be discovered. You built a ship to explore the universe!</p>
-        <br>
-        <p>Start by buying parts to increase your speed. You are always moving forward.</p>
-        <p>As you reach new exoplanet checkpoints, you will rescue refugees who will work for you and boost your economy!</p>
-      </div>
-    </div>
-  </div>
-
-  <div style="text-align:center">
-    <img src="Untitled_000001.png" style="width: 400px" alt="Game Logo">
-  </div>
-  
-  <nav class="tabswitcher" aria-label="Main Navigation">
-    <button class="tabbutton" data-tab="game">Your ship</button>
-    <button class="tabbutton" data-tab="refugees">Refugees</button>
-    <button class="tabbutton" data-tab="statistics">Statistics</button>
-    <button class="tabbutton" data-tab="achievements">Achievements</button>
-    <button class="tabbutton" data-tab="options">Options</button>
-  </nav>
-  
-  <main>
-    <div class="wrapper">
-      <div id="game" class="tab">
-        <h2>Your ship</h2>
-        <div id="main">
-          <div style="text-align:center; font-weight: bold; font-size: 1.2em;">
-            You have travelled <span id="val-meters">0</span> <span id="unit-meters">meters</span>.
-          </div>
-          <div style="text-align:center; font-size: 1.1em;">
-            <span id="val-speed">0</span> <span id="unit-speed">m/s</span>
-          </div>
-          
-          <div style="margin-top: 10px;">
-            <p style="text-align:center; font-weight: bold;">Income: <span id="val-funds">0.10</span> €/s</p>
-          </div>
-          
-          <div style="font-family:Tahoma; font-size:40px; text-align:center; margin: 10px 0;">
-            <span id="val-money">0</span> €
-          </div>
-          <button data-action="buyMax" class="button" style="width:150px">Max everything</button>
-          
-          <div class="upgrade-group">
-            <h3>Rockets</h3>
-            <div>
-              <button id="btn-buy-rocket" class="button" data-action="buyPart" data-part="rocket">
-                <span id="val-cost-rocket">10</span> € for <span id="val-name-rocket">Bottle</span> rocket.
-              </button>
-              <span id="wrap-wait-buy-rocket" style="display:none" class="wait-time"> Wait: <span id="val-wait-buy-rocket"></span></span>
+    <div id="popup" class="modal" role="dialog" aria-labelledby="modalTitle" aria-describedby="modalDesc">
+        <div class="modal-content">
+            <div class="modal-header">
+                <button class="close" data-action="closeModal" aria-label="Close modal">×</button>
+                <h2 id="modalTitle" style="text-align:center">Welcome</h2>
             </div>
-            <div>
-              <button id="btn-update-rocket" class="button" data-action="upgradePart" data-part="rocket">
-                <span id="val-update-cost-rocket">20</span> € to update your rockets
-              </button>
-              <span class="update-amount"><span id="val-update-amount-rocket">0</span>/5</span>
-              <span id="wrap-wait-update-rocket" style="display:none" class="wait-time"> Wait: <span id="val-wait-update-rocket"></span></span>
+            <div id="modalDesc" style="text-align:center" class="modal-body">
+                <p>You heard from the news that perfect exoplanets are waiting to be discovered. You built a ship to explore the universe!</p>
+                <br>
+                <p>Start by buying parts to increase your speed. You are always moving forward.</p>
+                <p>As you reach new exoplanet checkpoints, you will rescue refugees who will work for you and boost your economy!</p>
             </div>
-            <p class="description-text">
-              Current speed multiplier: x<span id="val-rocket-mult">1.00</span> (x<span id="val-rocket-base-mult">2</span> per rocket, x<span id="val-rocket-up-mult">1.5</span> per update)
-            </p>
-          </div>
-          
-          <div class="upgrade-group">
-            <h3>Ships</h3>
-            <div>
-              <button id="btn-buy-ship" class="button" data-action="buyPart" data-part="ship">
-                <span id="val-cost-ship">10</span> € for <span id="val-name-ship">Cardboard box ship</span>.
-              </button>
-              <span id="wrap-wait-buy-ship" style="display:none" class="wait-time"> Wait: <span id="val-wait-buy-ship"></span></span>
-            </div>
-            <div>
-              <button id="btn-update-ship" class="button" data-action="upgradePart" data-part="ship">
-                <span id="val-update-cost-ship">20</span> € to update your ship
-              </button>
-              <span class="update-amount"><span id="val-update-amount-ship">0</span>/5</span>
-              <span id="wrap-wait-update-ship" style="display:none" class="wait-time"> Wait: <span id="val-wait-update-ship"></span></span>
-            </div>
-            <p class="description-text">
-              Adds <span id="val-ship-add">0.1</span> to base speed. Current base speed total: <span id="val-ship-base">0.0</span>
-            </p>
-          </div>
-          
-          <div class="upgrade-group">
-            <h3>Wings</h3>
-            <div>
-              <button id="btn-buy-wing" class="button" data-action="buyPart" data-part="wing">
-                <span id="val-cost-wing">25</span> € for <span id="val-name-wing">Paper</span> wings.
-              </button>
-              <span id="wrap-wait-buy-wing" style="display:none" class="wait-time"> Wait: <span id="val-wait-buy-wing"></span></span>
-            </div>
-            <div>
-              <button id="btn-update-wing" class="button" data-action="upgradePart" data-part="wing">
-                <span id="val-update-cost-wing">40</span> € to update your wings
-              </button>
-              <span class="update-amount"><span id="val-update-amount-wing">0</span>/5</span>
-              <span id="wrap-wait-update-wing" style="display:none" class="wait-time"> Wait: <span id="val-wait-update-wing"></span></span>
-            </div>
-            <p class="description-text">
-              Current speed multiplier: x<span id="val-wing-mult">1.00</span> (x<span id="val-wing-base-mult">1.5</span> per wing, x<span id="val-wing-up-mult">1.2</span> per update)
-            </p>
-          </div>
         </div>
-      </div>
-      
-      <div id="shipContainer" class="container" aria-label="Planet Exploration Progress">
-        <h2 style="color: white; margin-top: 15px; text-shadow: 1px 1px 2px black;">Planet Exploration</h2>
-        <div id="planetInfo">
-          <div>Distance left: <span id="val-planet-dist"></span> <span id="unit-planet-dist"></span></div>
-          <div>Est. Time: <span id="val-planet-time"></span></div>
-          <div>Expected refugees: <span id="val-planet-reward"></span></div>
-        </div>
-        <img id="planet" src="http://img02.deviantart.net/a326/i/2015/226/b/0/habitable_exoplanet_by_emperorkk-d95mlty.png" style="width:120px" alt="Planet">
-        <img id="shipDisplay" src="http://www.freeiconspng.com/uploads/spaceship-png-icon-8.png" class="ship" alt="Ship">
-      </div>
     </div>
 
-    <div class="wrapper">
-      <div id="refugees" class="tab">
-        <h2>Refugees</h2>
-        
-        <div id="btn-tab-refugees" style="margin-bottom: 15px; font-weight: bold; font-size: 1.1em; display: none;">
-          You have <span id="val-prestige-refugees">0</span> refugees working for you.
-        </div> 
-        <div id="msg-prestige-req" style="margin-bottom: 15px; font-weight: bold; font-size: 1.1em;">
-          Reach the next planet to recruit refugees!
-        </div>
-        
-        <div style="margin-bottom: 20px;">
-          <p class="description-text">Income boost from refugees: +<span id="val-boost-refugees">0.0</span>%</p>
-          <p class="description-text">Speed boost from slavery: +<span id="val-boost-slavery">0</span>%</p>
-          <p class="description-text">Income boost from capitalism: +<span id="val-boost-capitalism">0</span>%</p>
-        </div>
-
-        <table style="margin: 0 auto; border-spacing: 0 15px;">
-          <tr>
-            <td style="text-align: right; padding-right: 15px;">
-              <button id="btn-buy-slavery" data-action="buySlavery" class="button">
-                Human slavery (Lvl <span id="val-lvl-slavery">0</span>)
-              </button>
-              <p class="description-text">+30% to speed per level</p>
-            </td>
-            <td style="text-align: left; vertical-align: top; padding-top: 15px;">
-              <span style="font-weight: bold;">Cost: <span id="val-cost-slavery">10</span> refugees.</span>
-            </td>
-          </tr>
-          <tr>
-            <td style="text-align: right; padding-right: 15px;">
-              <button id="btn-buy-capitalism" data-action="buyCapitalism" class="button">
-                Capitalism (Lvl <span id="val-lvl-capitalism">0</span>)
-              </button>
-              <p class="description-text">+25% to income per level</p>
-            </td>
-            <td style="text-align: left; vertical-align: top; padding-top: 15px;">
-              <span style="font-weight: bold;">Cost: <span id="val-cost-capitalism">50</span> refugees.</span>
-            </td>
-          </tr>
-        </table>
-      </div>
+    <div style="text-align:center">
+        <img src="Untitled_000001.png" style="width: 400px" alt="Game Logo">
     </div>
 
-    <div class="wrapper">
-      <div id="achievements" class="tab">
-        <h2>Achievements</h2>
-        
-        <h3 style="color: #D11313; text-shadow: 1px 1px 2px rgba(255, 255, 255, 0.4); font-size: 24px; margin-bottom: 20px;">
-          Total Achievement Bonus: +<span id="val-ach-total-bonus">0</span>% to income
-        </h3>
-        
-        <div id="achievementsContainer" style="margin-top: 20px;">
+    <nav class="tabswitcher" aria-label="Main Navigation">
+        <button class="tabbutton" data-tab="game">Your ship</button>
+        <button class="tabbutton" data-tab="refugees">Refugees</button>
+        <button class="tabbutton" data-tab="statistics">Statistics</button>
+        <button class="tabbutton" data-tab="achievements">Achievements</button>
+        <button class="tabbutton" data-tab="options">Options</button>
+    </nav>
+
+    <main>
+        <div class="wrapper">
+            <div id="game" class="tab">
+                <h2>Your ship</h2>
+                <div id="main">
+                    <div style="text-align:center; font-weight: bold; font-size: 1.2em;">
+                        You have travelled <span id="val-meters">0</span> <span id="unit-meters">meters</span>.
+                    </div>
+                    <div style="text-align:center; font-size: 1.1em;">
+                        <span id="val-speed">0</span> <span id="unit-speed">m/s</span>
+                    </div>
+
+                    <div style="margin-top: 10px;">
+                        <p style="text-align:center; font-weight: bold;">Income: <span id="val-funds">0.10</span> €/s</p>
+                    </div>
+
+                    <div style="font-family:Tahoma; font-size:40px; text-align:center; margin: 10px 0;">
+                        <span id="val-money">0</span> €
+                    </div>
+                    <button data-action="buyMax" class="button" style="width:150px">Max everything</button>
+
+                    <div class="upgrade-group">
+                        <h3>Rockets</h3>
+                        <div>
+                            <button id="btn-buy-rocket" class="button" data-action="buyPart" data-part="rocket">
+                                <span id="val-cost-rocket">10</span> € for <span id="val-name-rocket">Bottle</span> rocket.
+                            </button>
+                            <span id="wrap-wait-buy-rocket" style="display:none" class="wait-time"> Wait: <span id="val-wait-buy-rocket"></span></span>
+                        </div>
+                        <div>
+                            <button id="btn-update-rocket" class="button" data-action="upgradePart" data-part="rocket">
+                                <span id="val-update-cost-rocket">20</span> € to update your rockets
+                            </button>
+                            <span class="update-amount"><span id="val-update-amount-rocket">0</span>/5</span>
+                            <span id="wrap-wait-update-rocket" style="display:none" class="wait-time"> Wait: <span id="val-wait-update-rocket"></span></span>
+                        </div>
+                        <p class="description-text">
+                            Current speed multiplier: x<span id="val-rocket-mult">1.00</span> (x<span id="val-rocket-base-mult">2</span> per rocket, x<span id="val-rocket-up-mult">1.5</span> per update)
+                        </p>
+                    </div>
+
+                    <div class="upgrade-group">
+                        <h3>Ships</h3>
+                        <div>
+                            <button id="btn-buy-ship" class="button" data-action="buyPart" data-part="ship">
+                                <span id="val-cost-ship">10</span> € for <span id="val-name-ship">Cardboard box ship</span>.
+                            </button>
+                            <span id="wrap-wait-buy-ship" style="display:none" class="wait-time"> Wait: <span id="val-wait-buy-ship"></span></span>
+                        </div>
+                        <div>
+                            <button id="btn-update-ship" class="button" data-action="upgradePart" data-part="ship">
+                                <span id="val-update-cost-ship">20</span> € to update your ship
+                            </button>
+                            <span class="update-amount"><span id="val-update-amount-ship">0</span>/5</span>
+                            <span id="wrap-wait-update-ship" style="display:none" class="wait-time"> Wait: <span id="val-wait-update-ship"></span></span>
+                        </div>
+                        <p class="description-text">
+                            Adds <span id="val-ship-add">0.1</span> to base speed. Current base speed total: <span id="val-ship-base">0.0</span>
+                        </p>
+                    </div>
+
+                    <div class="upgrade-group">
+                        <h3>Wings</h3>
+                        <div>
+                            <button id="btn-buy-wing" class="button" data-action="buyPart" data-part="wing">
+                                <span id="val-cost-wing">25</span> € for <span id="val-name-wing">Paper</span> wings.
+                            </button>
+                            <span id="wrap-wait-buy-wing" style="display:none" class="wait-time"> Wait: <span id="val-wait-buy-wing"></span></span>
+                        </div>
+                        <div>
+                            <button id="btn-update-wing" class="button" data-action="upgradePart" data-part="wing">
+                                <span id="val-update-cost-wing">40</span> € to update your wings
+                            </button>
+                            <span class="update-amount"><span id="val-update-amount-wing">0</span>/5</span>
+                            <span id="wrap-wait-update-wing" style="display:none" class="wait-time"> Wait: <span id="val-wait-update-wing"></span></span>
+                        </div>
+                        <p class="description-text">
+                            Current speed multiplier: x<span id="val-wing-mult">1.00</span> (x<span id="val-wing-base-mult">1.5</span> per wing, x<span id="val-wing-up-mult">1.2</span> per update)
+                        </p>
+                    </div>
+                </div>
+            </div>
+
+            <div id="shipContainer" class="container" aria-label="Planet Exploration Progress">
+                <h2 style="color: white; margin-top: 15px; text-shadow: 1px 1px 2px black;">Planet Exploration</h2>
+                <div id="planetInfo">
+                    <div>Distance left: <span id="val-planet-dist"></span> <span id="unit-planet-dist"></span></div>
+                    <div>Est. Time: <span id="val-planet-time"></span></div>
+                    <div>Expected refugees: <span id="val-planet-reward"></span></div>
+                </div>
+                <img id="planet" src="http://img02.deviantart.net/a326/i/2015/226/b/0/habitable_exoplanet_by_emperorkk-d95mlty.png" style="width:120px" alt="Planet">
+                <img id="shipDisplay" src="http://www.freeiconspng.com/uploads/spaceship-png-icon-8.png" class="ship" alt="Ship">
+            </div>
         </div>
-      </div>
-    </div>
-    
-    <div class="wrapper">
-      <div id="statistics" class="tab">
-        <h2>Statistics</h2>
-        <div>Your base speed is <span id="val-stat-base">0</span></div>
-        <div>You have bought <span id="val-stat-rockets">0</span> rockets.</div>
-        <div>You have bought <span id="val-stat-ships">0</span> ships.</div>
-        <div>You have bought <span id="val-stat-wings">0</span> pair of wings.</div>
-        <br>
-        <div>Planets Discovered: <span id="val-stat-planets">0</span></div>
-        <div>Total Refugees: <span id="val-stat-total-ref">0</span></div>
-        <div>Capitalism Level: <span id="val-stat-cap-lvl">0</span></div>
-        <div>Slavery Level: <span id="val-stat-slav-lvl">0</span></div>
-        <br>
-        <div>You have made a total of <span id="val-stat-money">0</span> €</div>
-        <div>You have travelled a total of <span id="val-stat-dist">0</span> <span id="unit-stat-dist">meters</span></div>
-        <br>
-        <div>Total Achievement Levels Unlocked: <span id="val-ach-count">0</span></div>
-        <br>
-        <div style="text-align:center">
-          <button data-action="hardReset" class="button" style="background-color: #D11313; color: white;">HARD RESET</button>
-        </div>
-      </div>
-    </div>
-    
-    <div class="wrapper">
-      <div id="options" class="tab">
-        <h2>Options</h2>
-        <div><button data-action="toggleAnim" class="button">Toggle background animation</button></div>
-        <div><button data-action="toggleNotat" class="button">Toggle scientific/short scale notations</button></div>
-        <br>
-        <div>
-          <button data-action="exportSave" class="button" style="width: auto; padding: 0 15px;">Export Save</button>
-          <button data-action="importSave" class="button" style="width: auto; padding: 0 15px;">Import Save</button>
-        </div>
-      </div>
-    </div>
-  </main>
-  
-  <div id="achievementBox" role="alert" aria-live="polite"><span id="val-ach-msg"></span></div>
-  
-  <script src="game.js"></script>
-  
-  <footer style="text-align:center;font-size:120%; bottom:0px; position:relative; width:100%; margin-top: 30px; padding-bottom: 20px;">
-    <a href="https://rawgit.com/IvarK/BuildASpaceShip/master/changelog.html" target="_blank" rel="noopener">Changelog</a> |
-    <a href="https://www.reddit.com/r/incremental_games/comments/53smbi/build_a_spaceship/" target="_blank" rel="noopener">Reddit</a> |
-    <a href="http://ivark.github.io/about.html" target="_blank" rel="noopener">About me</a>
-  </footer>
-  
+
+        <div class="wrapper">
+            <div id="refugees" class="tab">
+                <h2>Refugees</h2>
+
+                <div id="btn-tab-refugees" style="margin-bottom: 15px; font-weight: bold; font-size: 1.1em; display: none;">
+                    You have <span id="val-prestige-refugees">0</span> refugees working for you.
+                </div>
+                <div id="msg-prestige-req" style="margin-bottom: 15px; font-weight: bold; font-size: 1.1em;">
+                    Reach the next planet to recruit refugees!
+                </div>
+
+                <div style="margin-bottom: 20px;">
+                    <p class="description-text">Speed boost from slavery: +<span id="val-boost-slavery">0</span>%</p>
+                    <p class="description-text">Income boost from capitalism: +<span id="val-boost-capitalism">0</span>%</p>
+                </div>
+
+                <table style="margin: 0 auto; border-spacing: 0 15px;">
+                    <tr>
+                        <td style="text-align: right; padding-right: 15px;">
+                            <button id="btn-buy-slavery" data-action="buySlavery" class="button">
+                                Human slavery (Lvl <span id="val-lvl-slavery">0</span>)
+                            </button>
+                            <p class="description-text">Next level: +<span id="val-next-slavery">0</span>% to speed</p>
+                        </td>
+                        <td style="text-align: left; vertical-align: top; padding-top: 15px;">
+                            <span style="font-weight: bold;">Cost: <span id="val-cost-slavery">10</span> refugees.</span>
+                        </td>
+                    </tr>
+                    <tr>
+                        <td style="text-align: right; padding-right: 15px;">
+                            <button id="btn-buy-capitalism" data-action="buyCapitalism" class="button">
+                                Capitalism (Lvl <span id="val-lvl-capitalism">0</span>)
+                            </button>
+                            <p class="description-text">Next level: +<span id="val-next-capitalism">0</span>% to income</p>
+                        </td>
+                        <td style="text-align: left; vertical-align: top; padding-top: 15px;">
+                            <span style="font-weight: bold;">Cost: <span id="val-cost-capitalism">50</span> refugees.</span>
+                        </td>
+                    </tr>
+                </table>
+            </div>
+
+            <div class="wrapper">
+                <div id="achievements" class="tab">
+                    <h2>Achievements</h2>
+
+                    <h3 style="color: #D11313; text-shadow: 1px 1px 2px rgba(255, 255, 255, 0.4); font-size: 24px; margin-bottom: 20px;">
+                        Total Achievement Bonus: +<span id="val-ach-total-bonus">0</span>% to income
+                    </h3>
+
+                    <div id="achievementsContainer" style="margin-top: 20px;">
+                    </div>
+                </div>
+            </div>
+
+            <div class="wrapper">
+                <div id="statistics" class="tab">
+                    <h2>Statistics</h2>
+                    <div>Your base speed is <span id="val-stat-base">0</span></div>
+                    <div>You have bought <span id="val-stat-rockets">0</span> rockets.</div>
+                    <div>You have bought <span id="val-stat-ships">0</span> ships.</div>
+                    <div>You have bought <span id="val-stat-wings">0</span> pair of wings.</div>
+                    <br>
+                    <div>Planets Discovered: <span id="val-stat-planets">0</span></div>
+                    <div>Total Refugees: <span id="val-stat-total-ref">0</span></div>
+                    <div>Capitalism Level: <span id="val-stat-cap-lvl">0</span></div>
+                    <div>Slavery Level: <span id="val-stat-slav-lvl">0</span></div>
+                    <br>
+                    <div>You have made a total of <span id="val-stat-money">0</span> €</div>
+                    <div>You have travelled a total of <span id="val-stat-dist">0</span> <span id="unit-stat-dist">meters</span></div>
+                    <br>
+                    <div>Total Achievement Levels Unlocked: <span id="val-ach-count">0</span></div>
+                    <br>
+                    <div style="text-align:center">
+                        <button data-action="hardReset" class="button" style="background-color: #D11313; color: white;">HARD RESET</button>
+                    </div>
+                </div>
+            </div>
+
+            <div class="wrapper">
+                <div id="options" class="tab">
+                    <h2>Options</h2>
+                    <div><button data-action="toggleAnim" class="button">Toggle background animation</button></div>
+                    <div><button data-action="toggleNotat" class="button">Toggle scientific/short scale notations</button></div>
+                    <br>
+                    <div>
+                        <button data-action="exportSave" class="button" style="width: auto; padding: 0 15px;">Export Save</button>
+                        <button data-action="importSave" class="button" style="width: auto; padding: 0 15px;">Import Save</button>
+                    </div>
+                </div>
+            </div>
+    </main>
+
+    <div id="achievementBox" role="alert" aria-live="polite"><span id="val-ach-msg"></span></div>
+
+    <script src="game.js"></script>
+
+    <footer style="text-align:center;font-size:120%; bottom:0px; position:relative; width:100%; margin-top: 30px; padding-bottom: 20px;">
+        <a href="https://rawgit.com/IvarK/BuildASpaceShip/master/changelog.html" target="_blank" rel="noopener">Changelog</a> |
+        <a href="https://www.reddit.com/r/incremental_games/comments/53smbi/build_a_spaceship/" target="_blank" rel="noopener">Reddit</a> |
+        <a href="http://ivark.github.io/about.html" target="_blank" rel="noopener">About me</a>
+    </footer>
+
 </body>
 </html>
