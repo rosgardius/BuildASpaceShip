@@ -408,32 +408,72 @@ const GameLogic = {
         }
     },
     buyMaxUpdates: function () {
-        let bought = true;
-        while (bought) {
-            bought = false;
-            ['rocket', 'ship', 'wing'].forEach(part => {
-                const conf = CONFIG.Parts[part];
-                let updateCost = Formulas.calcUpdateCost(conf.baseUpdateCost, player[conf.type], player[conf.updateType], conf.updateCostMult);
-
-                while (player.money >= updateCost && player[conf.updateType] < 5 && player[conf.type] !== 0) {
-                    player.money -= updateCost;
-                    if (conf.updateSpeedAddType) player.baseSpeed += 0.1 * (player.ships * player.shipUpdates + 1);
-                    player[conf.updateType]++;
-                    bought = true;
-                    updateCost = Formulas.calcUpdateCost(conf.baseUpdateCost, player[conf.type], player[conf.updateType], conf.updateCostMult);
-                }
-
-                let cost = Formulas.calcPartCost(conf.baseCost, player[conf.type], conf.costMult);
-                if (player.money >= cost && player[conf.updateType] === 5) {
-                    player.money -= cost;
-                    if (conf.baseSpeedAdd) player.baseSpeed += conf.baseSpeedAdd;
-                    player[conf.type]++;
-                    player[conf.updateType] = 0;
-                    bought = true;
+        let boughtAnything = false;
+        if (player.rockets === 0 && player.ships === 0 && player.wings === 0 && player.money >= 45) {
+            player.money -= 45;
+            player.rockets = 1;
+            player.ships = 1;
+            player.wings = 1;
+            player.baseSpeed += CONFIG.Parts.ship.baseSpeedAdd; // Добавляем +0.1 к базовой скорости
+            boughtAnything = true;
+        }
+        while (true) {
+            let rMult = Formulas.calcRocketMult(player.rockets, player.rocketUpdates, player.rocketSpeedMult, player.rocketUpdateSpeedMult);
+            let wMult = Formulas.calcWingMult(player.wings, player.wingUpdates, player.wingSpeedMult, player.wingUpdateSpeedMult);
+            let currentSpeed = Formulas.calcSpeed(player.baseSpeed, rMult, wMult, player.slaveryLevel);
+            let bestOption = null;
+            ['rocket', 'ship', 'wing'].forEach(partKey => {
+                const conf = CONFIG.Parts[partKey];
+                const count = player[conf.type];
+                const up = player[conf.updateType];
+                const isPart = (count === 0 || up === 5);
+                const cost = isPart
+                    ? Formulas.calcPartCost(conf.baseCost, count, conf.costMult)
+                    : Formulas.calcUpdateCost(conf.baseUpdateCost, count, up, conf.updateCostMult);
+                if (player.money >= cost) {
+                    let nextSpeed = currentSpeed;
+                    if (partKey === 'rocket') {
+                        let nextCount = isPart ? count + 1 : count;
+                        let nextUp = isPart ? 0 : up + 1;
+                        let nextMult = Formulas.calcRocketMult(nextCount, nextUp, player.rocketSpeedMult, player.rocketUpdateSpeedMult);
+                        nextSpeed = Formulas.calcSpeed(player.baseSpeed, nextMult, wMult, player.slaveryLevel);
+                    } else if (partKey === 'ship') {
+                        let nextBase = player.baseSpeed;
+                        if (isPart) {
+                            if (conf.baseSpeedAdd) nextBase += conf.baseSpeedAdd;
+                        } else {
+                            if (conf.updateSpeedAddType) nextBase += 0.1 * (count * up + 1);
+                        }
+                        nextSpeed = Formulas.calcSpeed(nextBase, rMult, wMult, player.slaveryLevel);
+                    } else if (partKey === 'wing') {
+                        let nextCount = isPart ? count + 1 : count;
+                        let nextUp = isPart ? 0 : up + 1;
+                        let nextMult = Formulas.calcWingMult(nextCount, nextUp, player.wingSpeedMult, player.wingUpdateSpeedMult);
+                        nextSpeed = Formulas.calcSpeed(player.baseSpeed, rMult, nextMult, player.slaveryLevel);
+                    }
+                    let deltaSpeed = nextSpeed - currentSpeed;
+                    let value = deltaSpeed / cost;
+                    if (!bestOption || value > bestOption.value) {
+                        bestOption = { partKey, isPart, cost, value };
+                    }
                 }
             });
+            if (!bestOption) break;
+            player.money -= bestOption.cost;
+            const conf = CONFIG.Parts[bestOption.partKey];
+            if (bestOption.isPart) {
+                if (conf.baseSpeedAdd) player.baseSpeed += conf.baseSpeedAdd;
+                player[conf.type]++;
+                player[conf.updateType] = 0;
+            } else {
+                if (conf.updateSpeedAddType) player.baseSpeed += 0.1 * (player.ships * player.shipUpdates + 1);
+                player[conf.updateType]++;
+            }
+            boughtAnything = true;
         }
-        updateCache();
+        if (boughtAnything) {
+            updateCache();
+        }
     }
 };
 
