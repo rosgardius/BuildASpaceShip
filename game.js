@@ -5,9 +5,9 @@ const CONFIG = {
     Wings: ['Paper', 'Cloth', 'Aluminium foil', 'Plastic', 'Wooden', 'Tin', 'Copper', 'Nickel', 'Bronze', 'Iron', 'Steel', 'Aluminium', 'Solar', 'Titanium', 'Carbon fabric', 'Adamantium', 'Black Matter'],
     MoneyFormat: ['K', 'M', 'B', 'T', 'Qa', 'Qi', 'Sx', 'Sp', 'Oc', 'No', 'Dc', 'UDc', 'DDc', 'TDc', 'QaDc', 'QiDc', 'SxDc', 'SpDc', 'ODc', 'NDc', 'Vg', 'UVg', 'DVg', 'TVg', 'QaVg', 'QiVg', 'SxVg', 'SpVg', 'OVg', 'NVg', 'Tg', 'UTg', 'DTg', 'TTg', 'QaTg', 'QiTg', 'SxTg', 'SpTg', 'OTg', 'NTg', 'Qa', 'UQa', 'DQa', 'TQa', 'QaQa', 'QiQa', 'SxQa', 'SpQa', 'OQa', 'NQa', 'Qi', 'UQi', 'DQi', 'TQi', 'QaQi', 'QiQi', 'SxQi', 'SpQi', 'OQi', 'NQi', 'Se', 'USe', 'DSe', 'TSe', 'QaSe', 'QiSe', 'SxSe', 'SpSe', 'OSe', 'NSe', 'St', 'USt', 'DSt', 'TSt', 'QaSt', 'QiSt', 'SxSt', 'SpSt', 'OSt', 'NSt', 'Og', 'UOg', 'DOg', 'TOg', 'QaOg', 'QiOg', 'SxOg', 'SpOg', 'OOg', 'NOg', 'Nn', 'UNn', 'DNn', 'TNn', 'QaNn', 'QiNn', 'SxNn', 'SpNn', 'ONn', 'NNn'],
     Parts: {
-        rocket: { nameArray: 'Rockets', costMult: 2418.1, updateCostMult: 4.75, type: 'rockets', updateType: 'rocketUpdates', costType: 'rocketCost', updateCostType: 'rocketUpdateCost', speedMultState: 'rocketSpeedMult', updateSpeedMultState: 'rocketUpdateSpeedMult' },
-        ship: { nameArray: 'Ships', costMult: 118.82, baseSpeedAdd: 0.1, updateCostMult: 2.6, updateSpeedAddType: true, type: 'ships', updateType: 'shipUpdates', costType: 'shipCost', updateCostType: 'shipUpdateCost' },
-        wing: { nameArray: 'Wings', costMult: 286.3, updateCostMult: 3.1, type: 'wings', updateType: 'wingUpdates', costType: 'wingCost', updateCostType: 'wingUpdateCost', speedMultState: 'wingSpeedMult', updateSpeedMultState: 'wingUpdateSpeedMult' }
+        rocket: { nameArray: 'Rockets', baseCost: 10, baseUpdateCost: 20, costMult: 2418.1, updateCostMult: 4.75, type: 'rockets', updateType: 'rocketUpdates', speedMultState: 'rocketSpeedMult', updateSpeedMultState: 'rocketUpdateSpeedMult' },
+        ship: { nameArray: 'Ships', baseCost: 10, baseUpdateCost: 20, costMult: 118.82, baseSpeedAdd: 0.1, updateCostMult: 2.6, updateSpeedAddType: true, type: 'ships', updateType: 'shipUpdates' },
+        wing: { nameArray: 'Wings', baseCost: 25, baseUpdateCost: 40, costMult: 286.3, updateCostMult: 3.1, type: 'wings', updateType: 'wingUpdates', speedMultState: 'wingSpeedMult', updateSpeedMultState: 'wingUpdateSpeedMult' }
     },
     Achievements: [
         {
@@ -37,8 +37,6 @@ const DEFAULT_STATE = {
     rocketSpeedMult: 1.85, rocketUpdateSpeedMult: 1.4,
     wingSpeedMult: 1.5, wingUpdateSpeedMult: 1.15,
     money: 50, totalMoney: 0, totalDistance: 0,
-    rocketCost: 10, shipCost: 10, wingCost: 25,
-    rocketUpdateCost: 20, shipUpdateCost: 20, wingUpdateCost: 40,
     rockets: 0, ships: 0, wings: 0,
     rocketUpdates: 0, shipUpdates: 0, wingUpdates: 0,
     nextPlanet: 15000000, previousPlanet: 0, planetsPassed: 0,
@@ -84,7 +82,12 @@ const Formulas = {
     calcSpeed: (baseSpeed, rTotalMult, wTotalMult, slavLevel) =>
         baseSpeed * (rTotalMult * wTotalMult) * Formulas.calcSlaveryMult(slavLevel),
     calcCapitalismCost: level => Math.floor(10 * Math.pow(1.25, level)),
-    calcSlaveryCost: level => Math.floor(5 * Math.pow(1.32, level))
+    calcSlaveryCost: level => Math.floor(5 * Math.pow(1.32, level)),
+    calcPartCost: (baseCost, count, costMult) => baseCost * Math.pow(costMult, count),
+    calcUpdateCost: (baseUpdateCost, count, updates, updateCostMult) => {
+        const totalUpdates = count === 0 ? updates : (count - 1) * 5 + updates;
+        return baseUpdateCost * Math.pow(updateCostMult, totalUpdates);
+    }
 };
 
 // CACHING LOGIC ---
@@ -216,23 +219,27 @@ const UI = {
         if (this.activeTab === 'game') {
             ['rocket', 'ship', 'wing'].forEach(part => {
                 const conf = CONFIG.Parts[part];
-                const canBuy = player.money >= player[conf.costType] && (player[conf.type] === 0 || player[conf.updateType] === 5);
 
-                DOM.set(`val-cost-${part}`, Formatter.shortenCosts(player[conf.costType]));
+                const cost = Formulas.calcPartCost(conf.baseCost, player[conf.type], conf.costMult);
+                const updateCost = Formulas.calcUpdateCost(conf.baseUpdateCost, player[conf.type], player[conf.updateType], conf.updateCostMult);
+
+                const canBuy = player.money >= cost && (player[conf.type] === 0 || player[conf.updateType] === 5);
+
+                DOM.set(`val-cost-${part}`, Formatter.shortenCosts(cost));
                 DOM.set(`val-name-${part}`, CONFIG[conf.nameArray][player[conf.type]] || 'Max');
                 DOM.setClass(`btn-buy-${part}`, canBuy ? 'button' : 'nbutton');
 
-                const canUpdate = player.money >= player[conf.updateCostType] && player[conf.updateType] < 5 && player[conf.type] !== 0;
+                const canUpdate = player.money >= updateCost && player[conf.updateType] < 5 && player[conf.type] !== 0;
                 DOM.set(`val-update-amount-${part}`, player[conf.updateType]);
-                DOM.set(`val-update-cost-${part}`, Formatter.shortenCosts(player[conf.updateCostType]));
+                DOM.set(`val-update-cost-${part}`, Formatter.shortenCosts(updateCost));
                 DOM.setClass(`btn-update-${part}`, canUpdate ? 'button' : 'nbutton');
 
-                const waitBuy = !canBuy && player.money < player[conf.costType] && income > 0 && (player[conf.type] === 0 || player[conf.updateType] === 5);
-                if (waitBuy) DOM.set(`val-wait-buy-${part}`, Formatter.formatTime((player[conf.costType] - player.money) / income));
+                const waitBuy = !canBuy && player.money < cost && income > 0 && (player[conf.type] === 0 || player[conf.updateType] === 5);
+                if (waitBuy) DOM.set(`val-wait-buy-${part}`, Formatter.formatTime((cost - player.money) / income));
                 DOM.setDisplay(`wrap-wait-buy-${part}`, waitBuy, 'inline');
 
-                const waitUpdate = !canUpdate && player[conf.updateType] < 5 && player[conf.type] !== 0 && player.money < player[conf.updateCostType] && income > 0;
-                if (waitUpdate) DOM.set(`val-wait-update-${part}`, Formatter.formatTime((player[conf.updateCostType] - player.money) / income));
+                const waitUpdate = !canUpdate && player[conf.updateType] < 5 && player[conf.type] !== 0 && player.money < updateCost && income > 0;
+                if (waitUpdate) DOM.set(`val-wait-update-${part}`, Formatter.formatTime((updateCost - player.money) / income));
                 DOM.setDisplay(`wrap-wait-update-${part}`, waitUpdate, 'inline');
             });
 
@@ -375,9 +382,10 @@ const GameLogic = {
     },
     buyPart: function (part) {
         const conf = CONFIG.Parts[part];
-        if (player.money >= player[conf.costType] && (player[conf.type] === 0 || player[conf.updateType] === 5)) {
-            player.money -= player[conf.costType];
-            player[conf.costType] *= conf.costMult;
+        const cost = Formulas.calcPartCost(conf.baseCost, player[conf.type], conf.costMult);
+
+        if (player.money >= cost && (player[conf.type] === 0 || player[conf.updateType] === 5)) {
+            player.money -= cost;
 
             if (conf.baseSpeedAdd) player.baseSpeed += conf.baseSpeedAdd;
 
@@ -388,9 +396,10 @@ const GameLogic = {
     },
     upgradePart: function (part) {
         const conf = CONFIG.Parts[part];
-        if (player.money >= player[conf.updateCostType] && player[conf.updateType] < 5 && player[conf.type] !== 0) {
-            player.money -= player[conf.updateCostType];
-            player[conf.updateCostType] *= conf.updateCostMult;
+        const updateCost = Formulas.calcUpdateCost(conf.baseUpdateCost, player[conf.type], player[conf.updateType], conf.updateCostMult);
+
+        if (player.money >= updateCost && player[conf.updateType] < 5 && player[conf.type] !== 0) {
+            player.money -= updateCost;
 
             if (conf.updateSpeedAddType) player.baseSpeed += 0.1 * (player.ships * player.shipUpdates + 1);
 
@@ -404,16 +413,19 @@ const GameLogic = {
             bought = false;
             ['rocket', 'ship', 'wing'].forEach(part => {
                 const conf = CONFIG.Parts[part];
-                while (player.money >= player[conf.updateCostType] && player[conf.updateType] < 5 && player[conf.type] !== 0) {
-                    player.money -= player[conf.updateCostType];
-                    player[conf.updateCostType] *= conf.updateCostMult;
+                let updateCost = Formulas.calcUpdateCost(conf.baseUpdateCost, player[conf.type], player[conf.updateType], conf.updateCostMult);
+
+                while (player.money >= updateCost && player[conf.updateType] < 5 && player[conf.type] !== 0) {
+                    player.money -= updateCost;
                     if (conf.updateSpeedAddType) player.baseSpeed += 0.1 * (player.ships * player.shipUpdates + 1);
                     player[conf.updateType]++;
                     bought = true;
+                    updateCost = Formulas.calcUpdateCost(conf.baseUpdateCost, player[conf.type], player[conf.updateType], conf.updateCostMult);
                 }
-                if (player.money >= player[conf.costType] && player[conf.updateType] === 5) {
-                    player.money -= player[conf.costType];
-                    player[conf.costType] *= conf.costMult;
+
+                let cost = Formulas.calcPartCost(conf.baseCost, player[conf.type], conf.costMult);
+                if (player.money >= cost && player[conf.updateType] === 5) {
+                    player.money -= cost;
                     if (conf.baseSpeedAdd) player.baseSpeed += conf.baseSpeedAdd;
                     player[conf.type]++;
                     player[conf.updateType] = 0;
