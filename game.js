@@ -486,7 +486,6 @@ const SaveManager = {
                 const parsed = JSON.parse(data);
                 player = { ...DEFAULT_STATE, ...parsed };
                 updateCache();
-
                 if (player.lastSaveTime) {
                     const diffSec = (Date.now() - player.lastSaveTime) / 1000;
                     if (diffSec > 15) this.simulateOffline(diffSec);
@@ -495,32 +494,69 @@ const SaveManager = {
         } catch (e) { console.error('Load failed:', e); }
         updateCache();
     },
+
+    _checkOfflineAchievements: function () {
+        let changed = false;
+        CONFIG.Achievements.forEach(ach => {
+            while (ach.getCurrentValue(player) >= ach.getTarget(player[ach.id])) {
+                player[ach.id]++;
+                changed = true;
+            }
+        });
+        if (changed) updateCache();
+        return changed;
+    },
+
     save: function () {
         player.lastSaveTime = Date.now();
         localStorage.setItem('save', JSON.stringify(player));
     },
+
     simulateOffline: function (timeRemaining) {
         const totalOfflineTime = timeRemaining;
-
         let earnedD = 0, earnedM = 0, planets = 0;
-        while (timeRemaining > 0 && (player.cachedSpeed > 0 || player.cachedIncomePerSec > 0)) {
-            updateCache();
-            const tNext = player.cachedSpeed > 0 ? (player.nextPlanet - player.distance) / player.cachedSpeed : Infinity;
-            const step = Math.min(timeRemaining, tNext);
-
+        this._checkOfflineAchievements();
+        updateCache();
+        while (timeRemaining > 0 && player.cachedSpeed > 0) {
+            const timeToPlanet = (player.nextPlanet - player.distance) / player.cachedSpeed;
+            const distAchTarget = CONFIG.Achievements.find(a => a.id === 'achLevelDistance').getTarget(player.achLevelDistance);
+            const timeToDistAch = (distAchTarget > player.distance) ? (distAchTarget - player.distance) / player.cachedSpeed : Infinity;
+            let nextEventTime = Math.min(timeToPlanet, timeToDistAch);
+            if (nextEventTime <= 0) {
+                nextEventTime = 0.01;
+            }
+            const step = Math.min(timeRemaining, nextEventTime);
+            const startDist = player.distance;
+            const endDist = player.distance + (player.cachedSpeed * step);
+            const avgDist = (startDist + endDist) / 2;
+            const distLog = Formulas.getLog(Math.max(1, avgDist), player.distanceLogBase);
+            const achLevels = [player.achLevelDistance, player.achLevelSpeed, player.achLevelPlanets];
+            const achMult = Formulas.calcAchievementMultiplier(achLevels);
+            const capMult = Formulas.calcCapitalismMult(player.capitalismLevel);
+            const avgIncomePerSec = (player.cachedSpeed * (1 + 0.1 * distLog) / 4) * capMult * achMult;
             const stepDist = player.cachedSpeed * step;
-            const stepMoney = player.cachedIncomePerSec * step;
-
-            player.distance += stepDist; player.money += stepMoney;
-            earnedD += stepDist; earnedM += stepMoney;
+            const stepMoney = avgIncomePerSec * step;
+            player.distance += stepDist;
+            player.money += stepMoney;
+            earnedD += stepDist;
+            earnedM += stepMoney;
             timeRemaining -= step;
-
-            if (timeRemaining >= 0 && step === tNext) { GameLogic.triggerPlanetMilestone(true); planets++; }
+            this._checkOfflineAchievements();
+            if (player.distance >= player.nextPlanet - 0.001) {
+                GameLogic.triggerPlanetMilestone(true);
+                planets++;
+            }
+            updateCache();
         }
-        player.totalDistance += earnedD; player.totalMoney += earnedM;
+        if (timeRemaining > 0 && player.cachedIncomePerSec > 0) {
+            const extraMoney = player.cachedIncomePerSec * timeRemaining;
+            player.money += extraMoney;
+            earnedM += extraMoney;
+        }
+        player.totalDistance += earnedD;
+        player.totalMoney += earnedM;
         if (player.distance > player.bestDistance) player.bestDistance = player.distance;
-
-        let msg = `Offline for ${Formatter.shorten(totalOfflineTime)}s.\nTravelled: ${Formatter.distanceIndicators(earnedD).val}\nEarned: ${Formatter.shorten(earnedM)} €`;
+        let msg = `Offline for ${Formatter.shorten(totalOfflineTime)}s.\nTravelled: ${Formatter.distanceIndicators(earnedD).val} ${Formatter.distanceIndicators(earnedD).unit}\nEarned: ${Formatter.shorten(earnedM)} €`;
         if (planets > 0) msg += `\nDiscovered ${planets} new planet(s)!`;
         alert(msg);
     }
